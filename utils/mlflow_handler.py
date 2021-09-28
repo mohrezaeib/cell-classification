@@ -23,8 +23,10 @@ class MLFlowLogger(Callback):
 
 
 class MLFlowHandler:
-    def __init__(self, model_name, run_name, mlflow_source='./mlruns'):
+    def __init__(self, model_name, run_name, mlflow_source='./mlruns', run_ngrok=True):
         self.mlflow = mlflow
+        self.run_ngrok = run_ngrok
+        self.mlflow_source = mlflow_source
         self.mlflow.set_tracking_uri(mlflow_source)
         self.mlflow_logger = MLFlowLogger(mlflow)
         if run_name is not None:
@@ -33,6 +35,23 @@ class MLFlowHandler:
             self.run_name = model_name + "_" + str(datetime.datetime.now().date()) + "_" + str(
                 datetime.datetime.now().time())
         self.model_name = model_name
+
+    def colab_ngrok(self):
+        from pyngrok import ngrok
+
+        # run tracking UI in the background
+        os.system(f"cd {os.path.split(self.mlflow_source)[0]} && mlflow ui --port 5000 ")
+
+        ngrok.kill()
+
+        # Setting the authtoken (optional)
+        # Get your authtoken from https://dashboard.ngrok.com/auth
+        NGROK_AUTH_TOKEN = ""
+        ngrok.set_auth_token(NGROK_AUTH_TOKEN)
+
+        # Open an HTTPs tunnel on port 5000 for http://localhost:5000
+        ngrok_tunnel = ngrok.connect(addr="5000", proto="http", bind_tls=True)
+        print("MLflow Tracking UI:", ngrok_tunnel.public_url)
 
     def start_run(self, args):
         self.mlflow.set_experiment(str(self.model_name))
@@ -43,6 +62,8 @@ class MLFlowHandler:
         self.mlflow.set_tag("command_line line", command_line)
         for k, v in args._get_kwargs():
             self.mlflow.log_param(k, v)
+        if self.run_ngrok:
+            self.colab_ngrok()
 
     def end_run(self, model_path=None):
         if model_path is not None:

@@ -11,3 +11,4 @@ Pillow
 streamlit
 git+https://github.com/Practical-AI/deep_utils.git
 albumentations~=1.0.3
+pyngrok

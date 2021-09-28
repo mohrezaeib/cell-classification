@@ -33,4 +33,5 @@ def main_args():
     parser.add_argument('--model_path', type=str, default="weights", help='model path', required=False)
     parser.add_argument('--aug_prob', type=float, default=0.5, help='The probability of applying augmentations')
     parser.add_argument('--mlflow-source', type=str, default='./mlruns', help='The mlflow direcotry')
+    parser.add_argument('--run-ngrok', type=bool, default=True, help="Run ngrok for colab or not!")
     return parser
