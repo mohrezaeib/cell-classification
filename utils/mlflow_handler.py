@@ -7,7 +7,7 @@ import datetime
 
 
 class MLFlowLogger(Callback):
-    def __init__(self, mlflow):
+    def __init__(self, mlflow: mlflow):
         super(MLFlowLogger, self).__init__()
         self.mlflow = mlflow
 
@@ -23,9 +23,10 @@ class MLFlowLogger(Callback):
 
 
 class MLFlowHandler:
-    def __init__(self, model_name, run_name):
-        self.mlflow_logger = MLFlowLogger(mlflow)
+    def __init__(self, model_name, run_name, mlflow_source='./mlruns'):
         self.mlflow = mlflow
+        self.mlflow.set_tracking_uri(mlflow_source)
+        self.mlflow_logger = MLFlowLogger(mlflow)
         if run_name is not None:
             self.run_name = run_name
         else:

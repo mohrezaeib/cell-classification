@@ -25,7 +25,7 @@ def train():
     # file with ':' in their name  not allowed in Windows.
     id_ = id_.replace(':', '.')
     weight_path = os.path.join(os.getcwd(), 'weights', id_) + ".h5"
-    mlflow_handler = MLFlowHandler(model_name=model_name, run_name=id_)
+    mlflow_handler = MLFlowHandler(model_name=model_name, run_name=id_, mlflow_source=args.mlflow_source)
     mlflow_handler.start_run(args)
 
     # Loading Data
